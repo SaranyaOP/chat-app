@@ -8,12 +8,15 @@ import Register from './components/Register'
 
 const App = () => {
   return (
-    <div>
-      {/* <Navlinks />
+    <div className='flex lg:flex-row flex-col items-start w-[100%]'>
+      <Navlinks />
       <Chatlist />
       <Chatbox />
-      <Login /> */}
-      <Register />
+      <div className='hidden'> 
+        <Login /> 
+        <Register />
+      </div>
+    
     </div>
   )
 }
