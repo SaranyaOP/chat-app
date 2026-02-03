@@ -3,11 +3,19 @@ import logo from '../../public/assets/logo.png'
 import { RiArrowDownSFill, RiBardLine, RiChatAiLine, RiFile4Line, RiFolderUserLine, RiNotificationLine, RiShutDownLine } from 'react-icons/ri'
 import { signOut } from 'firebase/auth'
 import { auth } from '../firebase/firebase'
+import { ref, set, serverTimestamp } from "firebase/database";
+import { rtdb } from "../firebase/firebase";
 
-const Navlinks = () => {
+const Navlinks = ({ onToggleChatList }) => {
 
   const handleLogout = async()=>{
     try{
+      const uid = auth.currentUser.uid;
+
+  await set(ref(rtdb, `status/${uid}`), {
+    state: "offline",
+    last_changed: serverTimestamp(),
+  });
       await signOut(auth);
      
     }catch(error){
@@ -55,7 +63,7 @@ const Navlinks = () => {
         </li>
       
       </ul>
-       <button className='block lg:hidden lg:text-[28px] text-[22px]'>
+       <button onClick={onToggleChatList} className='block lg:hidden lg:text-[28px] text-[22px]'>
             <RiArrowDownSFill color="#ffffff" />
           </button>
     </main>

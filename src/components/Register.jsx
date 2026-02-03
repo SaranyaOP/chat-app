@@ -3,6 +3,8 @@ import { FaUserPlus } from "react-icons/fa";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { db, auth } from "../firebase/firebase";
 import { doc, setDoc } from "firebase/firestore";
+import WelcomeNote from "./WelcomeNote";
+import { toast } from "react-toastify";
 
 const Register = ({ isLogiin, setIsLogin }) => {
   const [userData, setUserData] = useState({
@@ -22,11 +24,20 @@ const Register = ({ isLogiin, setIsLogin }) => {
   console.log(userData);
   const handleAuth = async () => {
     setIsLoading(true);
+    if (
+      userData?.fullName === "" ||
+      userData?.email === "" ||
+      userData?.password === ""
+    ) {
+      toast.error("Please fill all fields");
+      setIsLoading(false);
+      return;
+    }
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         userData?.email,
-        userData?.password
+        userData?.password,
       );
       const user = userCredential.user;
 
@@ -49,6 +60,7 @@ const Register = ({ isLogiin, setIsLogin }) => {
   };
   return (
     <section className="flex flex-col justify-center items-center h-[100vh] background-image">
+      <WelcomeNote />
       <div className="bg-white shadow-lg p-5 rounded-xl h-[27rem] w-[20rem] flex flex-col justify-center items-center ">
         <div className="mb-10">
           <h1 className="text-center text-[28px] font-bold">Sign Up</h1>

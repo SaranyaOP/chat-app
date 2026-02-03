@@ -58,7 +58,7 @@ console.log(users)
       </button>
       {isModalOpen && (
          <div className='fixed inset-0 z-[100] flex justify-center items-center bg-[#00170cb7]' onClick={closeModal}>
-        <div className='relative p-4 w-full max-w-md right-50 max-h-full' onClick={(e) => e.stopPropagation()}>
+        <div className='relative p-4 w-full max-w-md  max-h-full' onClick={(e) => e.stopPropagation()}>
           < div className='relative bg-[#01AA85] w-[100%] rounded-md shadow-lg'>
             <div className='flex items-center justify-between p-4 md:p-5 border-b border-gray-300'>
               <h3 className='text-xl font-semibold text-white'>Search chat</h3>

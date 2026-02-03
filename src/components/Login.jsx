@@ -2,6 +2,8 @@ import React,{useState} from 'react'
 import {FaSignInAlt} from 'react-icons/fa'
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../firebase/firebase';
+import WelcomeNote from './WelcomeNote';
+import { toast } from "react-toastify";
 
 
 const Login = ({ isLogiin, setIsLogin }) => {
@@ -21,6 +23,14 @@ const Login = ({ isLogiin, setIsLogin }) => {
     
     const handleAuth = async ( ) => {
       setIsLoading(true);
+       if (
+            userData?.email === "" ||
+            userData?.password === ""
+          ) {
+            toast.error("Please fill all fields");
+            setIsLoading(false);
+            return;
+          }
       try{
        await signInWithEmailAndPassword(
           auth,
@@ -28,7 +38,8 @@ const Login = ({ isLogiin, setIsLogin }) => {
           userData?.password
         );
       }catch(error){
-        console.log('Error during registration:', error);
+        toast.error("Invalid email or password");
+        console.log('Error during login:', error);
       } finally{
         setIsLoading(false);
       }
@@ -37,6 +48,7 @@ const Login = ({ isLogiin, setIsLogin }) => {
     }
   return (
      <section className='flex flex-col justify-center items-center h-[100vh] background-image'>
+      <WelcomeNote />
          <div className='bg-white shadow-lg p-5 rounded-xl h-[27rem] w-[20rem] flex flex-col justify-center items-center '>   
              <div className='mb-10'>
                  <h1 className='text-center text-[28px] font-bold'>Sign In</h1>

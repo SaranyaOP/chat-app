@@ -3,6 +3,7 @@ import { getAuth } from "firebase/auth";
 import {
 addDoc, collection, doc, getDoc,  getFirestore, onSnapshot, serverTimestamp, setDoc, updateDoc 
 } from "firebase/firestore";
+import { getDatabase} from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDyr8MZqAt-19ETURnpmbEUM2hlpdo3AhM",
@@ -16,6 +17,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const rtdb = getDatabase(app);
 
 export const listenForChats = (setChats) => {
   const chatsRef = collection(db, "chats");
@@ -73,4 +75,7 @@ export const listenForMessages = (chatId, setMessages) => {
     setMessages(messages);
   });
 }
-export { auth, db };
+
+
+
+export { auth, db, rtdb };

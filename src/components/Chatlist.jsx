@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import defaultAvatar from "../../public/assets/default.jpg";
 import { RiMore2Fill } from "react-icons/ri";
 import SearchModal from "./SearchModal";
@@ -8,9 +8,15 @@ import chatData from "../data/chats";
 import { db, listenForChats } from "../firebase/firebase";
 import { auth } from "../firebase/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
-const Chatlist = ({ setSelectedUser }) => {
+import { ref, onValue } from "firebase/database";
+import { rtdb } from "../firebase/firebase";
+
+const Chatlist = ({ setSelectedUser, isOpen, onClose }) => {
   const [chats, setChats] = useState([]);
   const [user, setUser] = useState(null);
+  const [onlineUsers, setOnlineUsers] = useState()
+  const onlineUserIDs = Object.keys(onlineUsers || {});
+  const isOnline = onlineUserIDs.includes(user?.uid);
 
   useEffect(() => {
     const userDocRef = doc(db, "users", auth?.currentUser?.uid);
@@ -19,6 +25,28 @@ const Chatlist = ({ setSelectedUser }) => {
         setUser(doc.data());
       }
     });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const statusRef = ref(rtdb, "/status");
+
+    const unsubscribe = onValue(
+      statusRef,
+      (snapshot) => {
+       const data = snapshot.val();
+        console.log("RTDB Raw Data:", data); // Check your browser console!
+        const filteredData = Object.fromEntries(
+    Object.entries(data).filter(([key, value]) => value.state === "online")
+  );
+
+  setOnlineUsers(filteredData);
+      },
+      (error) => {
+        console.error("RTDB Error:", error); // This will tell you if it's a Permission issue
+      },
+    );
+
     return () => unsubscribe();
   }, []);
 
@@ -41,19 +69,33 @@ const Chatlist = ({ setSelectedUser }) => {
     });
   }, [chats]);
 
+  // useEffect(() => {
+  //   const onlineUserIDs = Object.keys(onlineUsers);
+  // }, [onlineUsers]);
+  console.log("CHATSUSERS");
+  console.log(onlineUsers);
+  console.log(sortedChats);
+
   const startChat = (user) => {
-    // console.log("Starting chat with:", user);
-    // alert("chat started")
     setSelectedUser(user);
+    if (onClose) onClose();
   };
   return (
-    <section className="relative hidden lg:flex flex-col item-start justify-start bg-white h-[100vh] w-[100%] md:w-[600px] ">
+    <section className={`relative ${isOpen ? 'flex fixed top-0 left-0 z-50' : 'hidden'} lg:flex flex-col items-start justify-start bg-white h-[100vh] w-[100%] md:w-[600px]`}>
       <header className="flex items-center justify-between w-[100%] lg:border-b border-b-1 border-[#898989b9] p-4 sticky md:static top-0 z-[100]">
         <main className="flex items-center gap-3">
-          <img
-            src={defaultAvatar}
-            className="w-[44px] h-[44px] object-cover rounded-full"
-          />
+    
+          <div className="relative inline-block">
+            <img
+              src={defaultAvatar}
+              alt="avatar"
+              className="w-12 h-12 rounded-full object-cover block"
+            />
+
+            {isOnline && (
+              <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-white" />
+            )}
+          </div>
           <span>
             <h3 className="p-0 font-semibold text-[#2A3D39] md:text-[17px]">
               {user?.fullName || "Unknown User"}
@@ -83,11 +125,19 @@ const Chatlist = ({ setSelectedUser }) => {
               ?.filter((user) => user?.email !== auth?.currentUser?.email)
               ?.map((user) => (
                 <>
-                  <div className="flex items-start gap-3" onClick={()=>startChat(user)}>
-                    <img
-                      src={user?.image || defaultAvatar}
-                      className="h-[40px] width-[40px] rounded-full object-cover"
-                    />
+                  <div
+                    className="flex items-start gap-3"
+                    onClick={() => startChat(user)}
+                  >
+                    <div className="relative inline-block">
+                      <img
+                        src={user?.image || defaultAvatar}
+                        className="h-[40px] w-[40px] rounded-full object-cover block"
+                      />
+                      {onlineUserIDs.includes(user?.uid) && (
+                        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-white" />
+                      )}
+                    </div>
                     <span>
                       <h2 className="p-0 font-semibold text-[#2A3d39] text-left text-[17px]">
                         {user?.fullName || "ChatFrik"}

@@ -6,10 +6,14 @@ import { messageData } from "../data/messageData";
 import { auth, listenForMessages } from "../firebase/firebase";
 import { sendMessage } from "../firebase/firebase";
 import logo from '../../public/assets/logo.png'
+import { ref, onValue } from "firebase/database";
+import { rtdb } from "../firebase/firebase";
 
 const Chatbox = ({selectedUser}) => {
   const [messages, setMessages] = useState([]);
   const[messageText, sendMessageText] = useState("");
+  const [onlineUsers, setOnlineUsers] = useState()
+
   //const senderEmail = "baxo@mailinator.com";
   const scrollRef = useRef(null);
 
@@ -17,12 +21,35 @@ const Chatbox = ({selectedUser}) => {
     const user1 = auth?.currentUser;
     const user2 = selectedUser;
     const senderEmail = auth?.currentUser?.email;
+        const onlineUserIDs = Object.keys(onlineUsers || {});
+  const isOnline = onlineUserIDs.includes(user2?.uid);
 
     console.log(chatId);
+    console.log("USER-222222222222222222222222222");
     console.log(user1);
     console.log(user2);
     
+useEffect(() => {
+    const statusRef = ref(rtdb, "/status");
 
+    const unsubscribe = onValue(
+      statusRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        console.log("RTDB Raw Data:", data); // Check your browser console!
+        const filteredData = Object.fromEntries(
+    Object.entries(data).filter(([key, value]) => value.state === "online")
+  );
+
+  setOnlineUsers(filteredData);
+      },
+      (error) => {
+        console.error("RTDB Error:", error); // This will tell you if it's a Permission issue
+      },
+    );
+
+    return () => unsubscribe();
+  }, []);
     
 
 
@@ -69,12 +96,18 @@ const Chatbox = ({selectedUser}) => {
       <header className="border-b border-gray-400 w-[100%] h-[82px] m:h-fit p-4 bg-white">
         <main className="flex items-center gap-3">
           <span>
+            <div className="relative inline-block">
             <img
               src={selectedUser?.image || defaultAvatar}
               alt="Chat Icon"
-              className="w-11 h-11 obect-cover rounded-full "
+              className="w-11 h-11 obect-cover rounded-full block"
             />
+            {isOnline && (
+              <span className="absolute bottom-0 right-0 block w-3 h-3 bg-green-500 rounded-full ring-2 ring-white"></span>
+            )}
+            </div>
           </span>
+          
           <span>
             <h3 className="font-semibold text-[#2A3D39] text-lg">
               {selectedUser?.fullName || "Unknown User"}
@@ -144,7 +177,7 @@ const Chatbox = ({selectedUser}) => {
     </section> : <section className="h-screen w-[100%] bg-[#e5f6f3]">
             <div className="flex flex-col justify-center items-center h-[100vh]">
               <img src={logo} width="100"/>
-              <h1 className="text-[30px] font-bold text-teal-700 mt-5">Welcome to VibeChat</h1>
+              <h1 className="text-[30px] font-bold text-teal-700 mt-5">Welcome to PingMe!</h1>
               <p className="text-gray-500">Connect and chat with friends easily,securely, fast and free</p>
             </div>
     </section> }
