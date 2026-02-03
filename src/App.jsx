@@ -1,22 +1,49 @@
-import React from 'react'
+import React,{useState,useEffect}from 'react'
 import Navlinks from './components/Navlinks'
 import Chatlist from './components/Chatlist'
 import Chatbox from './components/Chatbox'
 import Login from './components/Login'
 import Register from './components/Register'
+import {auth } from './firebase/firebase'
 
 
 const App = () => {
+  const[isLogiin, setIsLogin] = useState(true);
+  const[user, setUser] = useState(null);
+  const[selectedUser, setSelectedUser] = useState(null);
+
+
+  useEffect(() => {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      setUser(currentUser);
+    }
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user);
+    })
+
+    return () => unsubscribe();
+
+  }, []);
   return (
-    <div className='flex lg:flex-row flex-col items-start w-[100%]'>
+    <div>
+
+      {user ? (
+<div className='flex lg:flex-row flex-col items-start w-[100%]'>
       <Navlinks />
-      <Chatlist />
-      <Chatbox />
-      <div className='hidden'> 
-        <Login /> 
-        <Register />
+      <Chatlist setSelectedUser={setSelectedUser}/>
+      <Chatbox selectedUser={selectedUser}/>
+      </div>
+      ) : (
+    
+      <div> 
+        {isLogiin ? <Login isLogiin={isLogiin} setIsLogin={setIsLogin} /> : <Register isLogiin={isLogiin} setIsLogin={setIsLogin} />}
+        
       </div>
     
+   
+      )}
     </div>
   )
 }

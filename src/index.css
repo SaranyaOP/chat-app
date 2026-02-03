@@ -14,3 +14,9 @@ body{
    background-position: center;
    height: 100vh;
 }
+.custom-scrollbar{
+   overflow: scroll;
+}
+.custom-scrollbar::-webkit-scrollbar {
+   width: 0;
+}

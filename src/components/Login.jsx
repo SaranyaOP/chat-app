@@ -1,10 +1,15 @@
 import React,{useState} from 'react'
 import {FaSignInAlt} from 'react-icons/fa'
-const Login = () => {
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../firebase/firebase';
+
+
+const Login = ({ isLogiin, setIsLogin }) => {
   const[userData,setUserData]=useState({
       email:'',
       password:''
     });
+  const [isLoading,setIsLoading]=useState(false);
     const handleChangeUserData=(e)=>{
      const {name,value}=e.target;
   
@@ -13,12 +18,19 @@ const Login = () => {
       [name]:value,
     }))
     }
-    console.log(userData);
+    
     const handleAuth = async ( ) => {
+      setIsLoading(true);
       try{
-        alert('Login button clicked');
+       await signInWithEmailAndPassword(
+          auth,
+          userData?.email,
+          userData?.password
+        );
       }catch(error){
         console.log('Error during registration:', error);
+      } finally{
+        setIsLoading(false);
       }
   
       // Authentication logic will go here
@@ -36,11 +48,14 @@ const Login = () => {
  
              </div>
              <div className='w-full'>
-               <button onClick={handleAuth} className='bg-[#01aa85] text-white font-bold w-full p-2 rounded-md flex justify-center items-center gap-2'>Login<FaSignInAlt className='inline ml-2'/></button>
+               <button disabled={isLoading} onClick={handleAuth} className='bg-[#01aa85] text-white font-bold w-full p-2 rounded-md flex justify-center items-center gap-2'>
+                {isLoading ? <>Processing...</> : <>  Login<FaSignInAlt className='inline ml-2'/></>}
+              </button>
  
              </div>
              <div className='mt-5 text-center text-gray-400 text-sm'>
-               <button >Don't have an account? Sign Up</button>
+               <button onClick={()=>setIsLogin(!isLogiin)}>Don't have an account? Sign Up</button>
+               
              </div>
  
          </div>
