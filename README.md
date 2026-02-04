@@ -39,13 +39,3 @@ npm run dev
 # open http://localhost:5173 (Vite default)
 ```
 
-> ⚠️ Note: Replace/secure your Firebase configuration for production. The project currently includes a Firebase config in `src/firebase/firebase.js`.
-
-## TODO / potential improvements
-
-- Add profile image upload & display (not implemented yet)
-- Add tests and CI pipeline
-- Harden Firestore/RTDB security rules (production-ready rules)
-- Add message read receipts and typing indicators
-
----
