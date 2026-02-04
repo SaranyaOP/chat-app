@@ -1,16 +1,53 @@
-# React + Vite
+# PingMe — React Chat App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight real-time one-to-one chat application built with React and Firebase. This project is intended as a demo/portfolio app showcasing authentication, realtime messaging, and presence tracking.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## About
 
-## React Compiler
+A simple chat app that supports user authentication, presence (online/offline), and one-to-one messaging. Note: there is currently no profile image upload or display feature included — this may be added in a future update.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech stack
 
-## Expanding the ESLint configuration
+- **Frontend:** React 19 + Vite ⚡
+- **Styling:** Tailwind CSS
+- **Realtime & Storage:** Firebase (Auth, Firestore, Realtime Database, Storage)
+- **UI / Utilities:** react-icons, react-toastify
+- **Dev tools:** ESLint, PostCSS
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Key features
+
+- User sign up / login via Firebase Auth
+- One-to-one chats stored in `chats/{chatId}/messages` (Firestore)
+- Chat list with last message & sorting by timestamp
+- Online presence using Firebase Realtime Database (`/status/{uid}`)
+- Toast notifications for UX feedback
+
+## Important files & structure
+
+- `src/firebase/firebase.js` — Firebase setup & helpers (listenForChats, sendMessage, listenForMessages)
+- `src/firebase/firebaseUtility.js` — presence helpers (and utilities)
+- `src/components/` — `Login`, `Register`, `Chatlist`, `Chatbox`, `SearchModal`, etc.
+- `src/utils/formatTimestamp.js` — timestamp formatting
+
+## Quick start
+
+```bash
+npm install
+npm run dev
+# open http://localhost:5173 (Vite default)
+```
+
+> ⚠️ Note: Replace/secure your Firebase configuration for production. The project currently includes a Firebase config in `src/firebase/firebase.js`.
+
+## TODO / potential improvements
+
+- Add profile image upload & display (not implemented yet)
+- Add tests and CI pipeline
+- Harden Firestore/RTDB security rules (production-ready rules)
+- Add message read receipts and typing indicators
+
+---
+
+If you'd like, I can also open a PR that adds this README update or commit it directly to the repository. ✨
