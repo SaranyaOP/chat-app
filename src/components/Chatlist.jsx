@@ -10,13 +10,15 @@ import { auth } from "../firebase/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { ref, onValue } from "firebase/database";
 import { rtdb } from "../firebase/firebase";
+//import SettingsModal from "./SettingsModal";
 
 const Chatlist = ({ setSelectedUser, isOpen, onClose }) => {
   const [chats, setChats] = useState([]);
   const [user, setUser] = useState(null);
-  const [onlineUsers, setOnlineUsers] = useState()
+  const [onlineUsers, setOnlineUsers] = useState();
   const onlineUserIDs = Object.keys(onlineUsers || {});
   const isOnline = onlineUserIDs.includes(user?.uid);
+  //const [showSettings, setShowSettings] = useState(false); // Add this state
 
   useEffect(() => {
     const userDocRef = doc(db, "users", auth?.currentUser?.uid);
@@ -34,13 +36,15 @@ const Chatlist = ({ setSelectedUser, isOpen, onClose }) => {
     const unsubscribe = onValue(
       statusRef,
       (snapshot) => {
-       const data = snapshot.val();
+        const data = snapshot.val();
         console.log("RTDB Raw Data:", data); // Check your browser console!
         const filteredData = Object.fromEntries(
-    Object.entries(data).filter(([key, value]) => value.state === "online")
-  );
+          Object.entries(data).filter(
+            ([key, value]) => value.state === "online",
+          ),
+        );
 
-  setOnlineUsers(filteredData);
+        setOnlineUsers(filteredData);
       },
       (error) => {
         console.error("RTDB Error:", error); // This will tell you if it's a Permission issue
@@ -69,22 +73,16 @@ const Chatlist = ({ setSelectedUser, isOpen, onClose }) => {
     });
   }, [chats]);
 
-  // useEffect(() => {
-  //   const onlineUserIDs = Object.keys(onlineUsers);
-  // }, [onlineUsers]);
-  console.log("CHATSUSERS");
-  console.log(onlineUsers);
-  console.log(sortedChats);
-
   const startChat = (user) => {
     setSelectedUser(user);
     if (onClose) onClose();
   };
   return (
-    <section className={`relative ${isOpen ? 'flex fixed top-0 left-0 z-50' : 'hidden'} lg:flex flex-col items-start justify-start bg-white h-[100vh] w-[100%] md:w-[600px]`}>
+    <section
+      className={`relative ${isOpen ? "flex fixed top-0 left-0 z-50" : "hidden"} lg:flex flex-col items-start justify-start bg-white h-[100vh] w-[100%] lg:w-[600px]`}
+    >
       <header className="flex items-center justify-between w-[100%] lg:border-b border-b-1 border-[#898989b9] p-4 sticky md:static top-0 z-[100]">
         <main className="flex items-center gap-3">
-    
           <div className="relative inline-block">
             <img
               src={defaultAvatar}
@@ -105,9 +103,18 @@ const Chatlist = ({ setSelectedUser, isOpen, onClose }) => {
             </p>
           </span>
         </main>
-        <button className="bg-[#D9F2ED] w-[35px] h-[35px] p-2 flex items-center justify-center rounded-lg">
+        <button
+          // onClick={() => setShowSettings(true)}
+          className="bg-[#D9F2ED] w-[35px] h-[35px] p-2 flex items-center justify-center rounded-lg"
+        >
           <RiMore2Fill color="#01AA85" className="w-[28px] h-[28px]" />
         </button>
+        {/* {showSettings && (
+        // <SettingsModal 
+        //   user={user} 
+        //   onClose={() => setShowSettings(false)} 
+        // />
+      )} */}
       </header>
       <div className="w-[100%] mt-[10px] px-5">
         <header className="flex items-center justify-between">
@@ -115,7 +122,7 @@ const Chatlist = ({ setSelectedUser, isOpen, onClose }) => {
           <SearchModal startChat={startChat} />
         </header>
       </div>
-      <main className="flex flex-col items-start mt-[1.5rem] pb-3">
+      <main className="flex flex-col items-start mt-[1.5rem] pb-3 w-[100%]">
         {sortedChats.map((chat) => (
           <button
             key={chat?.uid}

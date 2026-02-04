@@ -22,6 +22,7 @@ const Login = ({ isLogiin, setIsLogin }) => {
     }
     
     const handleAuth = async ( ) => {
+      // Authentication logic will go here
       setIsLoading(true);
        if (
             userData?.email === "" ||
@@ -44,12 +45,12 @@ const Login = ({ isLogiin, setIsLogin }) => {
         setIsLoading(false);
       }
   
-      // Authentication logic will go here
+      
     }
   return (
      <section className='flex flex-col justify-center items-center h-[100vh] background-image'>
       <WelcomeNote />
-         <div className='bg-white shadow-lg p-5 rounded-xl h-[27rem] w-[20rem] flex flex-col justify-center items-center '>   
+         <div className='bg-white shadow-lg p-5 rounded-xl h-[27rem] w-[20rem] flex flex-col justify-center items-center mb-4'>   
              <div className='mb-10'>
                  <h1 className='text-center text-[28px] font-bold'>Sign In</h1>
                  <p className='text-center text-sm text-gray-400'>Welcome back, Login to continue</p>

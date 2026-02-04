@@ -8,6 +8,13 @@ body{
    background-color: #01aa8529;
 
 }
+html, body {
+  overflow: hidden; /* This kills the outer scrollbar */
+}
+
+#root {
+  height: 100%;
+}
 .background-image{
    background-image: url('./assets/background.png');
     background-size:100%;

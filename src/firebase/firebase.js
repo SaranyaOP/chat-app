@@ -1,9 +1,18 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import {
-addDoc, collection, doc, getDoc,  getFirestore, onSnapshot, serverTimestamp, setDoc, updateDoc 
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getFirestore,
+  onSnapshot,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
 } from "firebase/firestore";
-import { getDatabase} from "firebase/database";
+import { getDatabase } from "firebase/database";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDyr8MZqAt-19ETURnpmbEUM2hlpdo3AhM",
@@ -18,6 +27,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const rtdb = getDatabase(app);
+const storage = getStorage(app);
 
 export const listenForChats = (setChats) => {
   const chatsRef = collection(db, "chats");
@@ -71,11 +81,9 @@ export const listenForMessages = (chatId, setMessages) => {
   const chatRef = collection(db, "chats", chatId, "messages");
   onSnapshot(chatRef, (snapshot) => {
     const messages = snapshot.docs.map((doc) => doc.data());
-    
+
     setMessages(messages);
   });
-}
+};
 
-
-
-export { auth, db, rtdb };
+export { auth, db, rtdb, storage };
