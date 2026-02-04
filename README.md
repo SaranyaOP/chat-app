@@ -49,5 +49,3 @@ npm run dev
 - Add message read receipts and typing indicators
 
 ---
-
-If you'd like, I can also open a PR that adds this README update or commit it directly to the repository. ✨
